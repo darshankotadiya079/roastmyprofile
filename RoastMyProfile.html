@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>RoastMyProfile 🔥</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #f5f5f7; min-height: 100vh; padding: 2rem 1rem; color: #1d1d2e; }
+  .wrap { max-width: 620px; margin: 0 auto; }
+  .header { text-align: center; margin-bottom: 2rem; }
+  .header .logo { font-size: 40px; display: block; margin-bottom: 8px; }
+  .header h1 { font-size: 28px; font-weight: 700; color: #1d1d2e; margin-bottom: 6px; }
+  .header p { font-size: 14px; color: #666; }
+  .card { background: #fff; border-radius: 16px; padding: 1.25rem; margin-bottom: 1rem; border: 1px solid #e8e8e8; }
+  .api-bar { background: #f0f0f5; border-radius: 12px; padding: 0.75rem 1rem; margin-bottom: 1.25rem; display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+  .api-bar .status { font-size: 13px; color: #666; flex: 1; }
+  .api-bar .status.ok { color: #1D9E75; font-weight: 600; }
+  label { font-size: 14px; font-weight: 600; color: #1d1d2e; display: block; margin-bottom: 6px; }
+  textarea { width: 100%; min-height: 160px; font-size: 13px; padding: 0.75rem; border-radius: 10px; border: 1.5px solid #ddd; background: #fafafa; color: #1d1d2e; resize: vertical; line-height: 1.65; font-family: inherit; transition: border-color 0.2s; }
+  textarea:focus { outline: none; border-color: #D85A30; background: #fff; }
+  input[type=password], input[type=text] { width: 100%; font-size: 13px; padding: 0 12px; height: 40px; border-radius: 10px; border: 1.5px solid #ddd; background: #fafafa; color: #1d1d2e; font-family: inherit; transition: border-color 0.2s; }
+  input:focus { outline: none; border-color: #D85A30; }
+  .btn { display: inline-flex; align-items: center; gap: 6px; padding: 10px 18px; font-size: 13px; font-weight: 600; border-radius: 10px; border: 1.5px solid #ddd; background: #fff; color: #1d1d2e; cursor: pointer; transition: all 0.15s; }
+  .btn:hover { background: #f5f5f7; border-color: #bbb; }
+  .btn:active { transform: scale(0.97); }
+  .btn-fire { background: #D85A30; color: #fff; border-color: #D85A30; font-size: 16px; padding: 14px 20px; width: 100%; justify-content: center; }
+  .btn-fire:hover { background: #C04D26; border-color: #C04D26; }
+  .btn-fire:disabled { background: #ddd; border-color: #ddd; color: #999; cursor: not-allowed; transform: none; }
+  .btn-fix { background: #1D9E75; color: #fff; border-color: #1D9E75; font-size: 16px; padding: 14px 20px; width: 100%; justify-content: center; }
+  .btn-fix:hover { background: #178A64; }
+  .btn-wa { background: #25D366; color: #fff; border-color: #25D366; flex: 1; justify-content: center; }
+  .btn-li { background: #0077B5; color: #fff; border-color: #0077B5; flex: 1; justify-content: center; }
+  .btn-sm { font-size: 12px; padding: 5px 12px; }
+  .btn-full { width: 100%; justify-content: center; margin-top: 8px; }
+  .roast-box { background: #FEF0EA; padding: 1rem; border-radius: 10px; font-size: 14px; line-height: 1.85; color: #4A1B0C; margin-bottom: 1rem; min-height: 60px; }
+  .fixed-box { background: #f8f8fa; padding: 0.75rem; border-radius: 10px; font-size: 13px; line-height: 1.7; color: #1d1d2e; white-space: pre-wrap; }
+  .row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+  .row-icon { display: flex; align-items: center; gap: 8px; font-size: 15px; font-weight: 600; }
+  .score-track { height: 7px; background: #eee; border-radius: 99px; overflow: hidden; margin-top: 5px; }
+  .score-fill { height: 100%; border-radius: 99px; transition: width 1.2s cubic-bezier(0.4,0,0.2,1); }
+  .score-row { margin-bottom: 12px; }
+  .score-row-top { display: flex; justify-content: space-between; margin-bottom: 4px; font-size: 13px; }
+  .err { background: #FEE; color: #A32D2D; padding: 0.75rem 1rem; font-size: 13px; border-radius: 10px; margin-bottom: 1rem; border-left: 4px solid #E24B4A; display: none; }
+  .loader { text-align: center; padding: 3rem 0; display: none; }
+  .spinner { width: 40px; height: 40px; border: 3px solid #eee; border-radius: 50%; animation: spin 0.8s linear infinite; margin: 0 auto 14px; }
+  .spinner-r { border-top-color: #D85A30; }
+  .spinner-g { border-top-color: #1D9E75; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .tip { font-size: 12px; color: #999; margin: 6px 0 1.25rem; }
+  .success-bar { background: #EAF3DE; border-radius: 10px; padding: 0.75rem 1rem; font-size: 13px; color: #3B6D11; margin-bottom: 1rem; font-weight: 500; }
+  .caret { display: inline-block; width: 2px; height: 14px; background: #4A1B0C; margin-left: 1px; vertical-align: middle; animation: blink 1s step-end infinite; }
+  @keyframes blink { 50% { opacity: 0; } }
+  .footer { text-align: center; margin-top: 2rem; font-size: 12px; color: #aaa; padding-top: 1rem; border-top: 1px solid #eee; }
+  .hidden { display: none !important; }
+  .flex-gap { display: flex; gap: 8px; flex-wrap: wrap; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="header">
+    <span class="logo">🔥</span>
+    <h1>RoastMyProfile</h1>
+    <p>Teri LinkedIn profile itni boring hai ki recruiter ne padhi hi nahi. Ab fix karte hain.</p>
+  </div>
+
+  <!-- API BAR -->
+  <div class="api-bar">
+    🔑
+    <span class="status" id="api-status">Groq API key required</span>
+    <button class="btn btn-sm" id="api-toggle-btn">Add key</button>
+  </div>
+  <div id="api-input-section" class="hidden" style="margin-bottom:1.25rem;">
+    <p style="font-size:13px;color:#666;margin-bottom:8px;">
+      Free key lo: <a href="https://console.groq.com" target="_blank" style="color:#D85A30;">console.groq.com</a> → API Keys → Create API Key
+    </p>
+    <div style="display:flex;gap:8px;">
+      <input type="password" id="api-key-inp" placeholder="gsk_..." />
+      <button class="btn" id="api-save-btn">Save</button>
+    </div>
+  </div>
+
+  <!-- ERROR -->
+  <div class="err" id="err-box"></div>
+
+  <!-- HOME VIEW -->
+  <div id="view-home">
+    <div class="row" style="margin-bottom:6px;">
+      <label style="margin:0;">LinkedIn profile text yahan paste karo</label>
+      <button class="btn btn-sm" id="sample-btn">Sample use karo</button>
+    </div>
+    <textarea id="profile-input" placeholder="LinkedIn pe jao → Naam, Headline, Summary, Skills, Experience sab copy karo → yahan paste karo&#10;&#10;Koi login nahi, koi scraping nahi — sirf text!"></textarea>
+    <p class="tip">🔒 Data kahi save nahi hota — sirf Groq AI ko bheja jaata hai</p>
+    <button class="btn btn-fire" id="roast-btn" disabled>🔥 Roast Karo!</button>
+  </div>
+
+  <!-- ROASTING LOADER -->
+  <div class="loader" id="view-roasting">
+    <div class="spinner spinner-r"></div>
+    <p style="font-size:16px;font-weight:600;margin-bottom:6px;">AI roast kar rahi hai...</p>
+    <p style="font-size:13px;color:#666;">Recruiter ki nazar se dekh rahi hai teri profile ko</p>
+  </div>
+
+  <!-- RESULT VIEW -->
+  <div id="view-result" class="hidden">
+    <!-- Roast Card -->
+    <div class="card">
+      <div class="row-icon" style="margin-bottom:12px;">🔥 AI ka brutal roast</div>
+      <div class="roast-box" id="roast-text"></div>
+      <div class="flex-gap" id="roast-actions" style="display:none;">
+        <button class="btn btn-sm" id="copy-roast-btn">📋 Copy roast</button>
+        <button class="btn btn-wa btn-sm" id="share-wa-btn">💬 WhatsApp</button>
+        <button class="btn btn-li btn-sm" id="share-li-btn">💼 LinkedIn</button>
+      </div>
+    </div>
+    <!-- Score Card -->
+    <div class="card hidden" id="score-card">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;">
+        <div class="row-icon">📊 Recruiter Score</div>
+        <div style="text-align:right;">
+          <div id="overall-num" style="font-size:32px;font-weight:700;line-height:1;">—</div>
+          <div style="font-size:11px;color:#999;">/ 100</div>
+        </div>
+      </div>
+      <div id="score-bars-wrap"></div>
+      <p id="score-verdict" style="font-size:12px;color:#999;margin-top:10px;"></p>
+    </div>
+    <button class="btn btn-fix hidden" id="fix-btn">✨ Ab Fix Karo — Recruiter-Ready Banao</button>
+    <button class="btn btn-full hidden" id="retry-btn">🔄 Naya profile try karo</button>
+  </div>
+
+  <!-- FIXING LOADER -->
+  <div class="loader" id="view-fixing">
+    <div class="spinner spinner-g"></div>
+    <p style="font-size:16px;font-weight:600;margin-bottom:6px;">AI fix kar rahi hai...</p>
+    <p style="font-size:13px;color:#666;">Recruiter-ready profile ban rahi hai...</p>
+  </div>
+
+  <!-- FIXED VIEW -->
+  <div id="view-fixed" class="hidden">
+    <div class="success-bar">✅ Teri profile ab recruiter-ready hai!</div>
+    <div id="fixed-sections-wrap"></div>
+    <div style="background:#EAF3DE;border-radius:10px;padding:0.75rem 1rem;margin-bottom:1rem;font-size:13px;color:#3B6D11;">
+      💡 LinkedIn pe jao → Profile Edit karo → Upar waala text copy-paste karo. Bas!
+    </div>
+    <div class="flex-gap" style="margin-bottom:8px;">
+      <button class="btn btn-wa" id="share-wa2-btn">💬 WhatsApp</button>
+      <button class="btn btn-li" id="share-li2-btn">💼 LinkedIn</button>
+    </div>
+    <button class="btn btn-full" id="restart-btn">🔄 Naya profile try karo</button>
+  </div>
+
+  <div class="footer">RoastMyProfile.in — Made with 🔥 for Indian job seekers</div>
+</div>
+
+<script>
+(function () {
+  let apiKey = '', profileText = '', roastText = '', fixedData = null, scoreData = null;
+
+  const SAMPLE = `Name: Rahul Sharma
+Headline: Student at Ganpat University
+Summary: I am a hardworking and dedicated student pursuing B.Tech in Computer Engineering. I like to learn new things and I am a team player. Looking for opportunities.
+Skills: C, C++, Java, Python
+Experience: Internship at local company (2 months) - helped with coding tasks`;
+
+  const $ = id => document.getElementById(id);
+
+  function showView(id) {
+    ['view-home','view-roasting','view-result','view-fixing','view-fixed'].forEach(v => {
+      const el = $(v);
+      if (v === id) { el.classList.remove('hidden'); el.style.display = ''; }
+      else { el.classList.add('hidden'); el.style.display = 'none'; }
+    });
+    if (id === 'view-roasting' || id === 'view-fixing') $(id).style.display = 'block';
+  }
+
+  function showErr(msg) {
+    const el = $('err-box');
+    el.textContent = msg;
+    el.style.display = msg ? 'block' : 'none';
+  }
+
+  function updateRoastBtn() {
+    const btn = $('roast-btn');
+    const hasProfile = $('profile-input').value.trim().length > 0;
+    btn.disabled = !apiKey || !hasProfile;
+    btn.textContent = !apiKey ? '🔥 Roast Karo! (pehle API key add karo)' : !hasProfile ? '🔥 Roast Karo! (profile paste karo)' : '🔥 Roast Karo!';
+  }
+
+  $('api-toggle-btn').addEventListener('click', () => {
+    $('api-input-section').classList.toggle('hidden');
+  });
+
+  function saveApiKey() {
+    const v = $('api-key-inp').value.trim();
+    if (!v) return;
+    apiKey = v;
+    $('api-status').textContent = '✅ Groq API connected';
+    $('api-status').className = 'status ok';
+    $('api-toggle-btn').textContent = 'Change';
+    $('api-input-section').classList.add('hidden');
+    showErr('');
+    updateRoastBtn();
+  }
+
+  $('api-save-btn').addEventListener('click', saveApiKey);
+  $('api-key-inp').addEventListener('keydown', e => { if (e.key === 'Enter') saveApiKey(); });
+  $('profile-input').addEventListener('input', updateRoastBtn);
+  $('sample-btn').addEventListener('click', () => { $('profile-input').value = SAMPLE; updateRoastBtn(); });
+
+  async function callGroq(systemPrompt, userMsg) {
+    const res = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ' + apiKey
+      },
+      body: JSON.stringify({
+        model: 'llama3-70b-8192',
+        messages: [
+          { role: 'system', content: systemPrompt },
+          { role: 'user', content: userMsg }
+        ],
+        temperature: 0.85,
+        max_tokens: 900
+      })
+    });
+    if (!res.ok) {
+      const e = await res.json().catch(() => ({}));
+      throw new Error(e.error?.message || 'API error ' + res.status);
+    }
+    const d = await res.json();
+    return d.choices[0].message.content.trim();
+  }
+
+  function typeWriter(text, el, onDone) {
+    el.innerHTML = '';
+    let i = 0;
+    function tick() {
+      if (i <= text.length) {
+        el.innerHTML = text.slice(0, i).replace(/\n/g, '<br>') + '<span class="caret"></span>';
+        i++;
+        setTimeout(tick, 14);
+      } else {
+        el.innerHTML = text.replace(/\n/g, '<br>');
+        onDone && onDone();
+      }
+    }
+    tick();
+  }
+
+  function renderScoreBars(s) {
+    const bars = [
+      { label: 'Headline', val: s.headline, color: '#378ADD' },
+      { label: 'Summary', val: s.summary, color: '#1D9E75' },
+      { label: 'Skills', val: s.skills, color: '#BA7517' }
+    ];
+    $('score-bars-wrap').innerHTML = bars.map(b => `
+      <div class="score-row">
+        <div class="score-row-top">
+          <span style="color:#555;">${b.label}</span>
+          <span style="font-weight:600;color:${b.color};">${b.val}/100</span>
+        </div>
+        <div class="score-track"><div class="score-fill" style="width:${b.val}%;background:${b.color};"></div></div>
+      </div>`).join('');
+    const col = s.overall >= 70 ? '#3B6D11' : s.overall >= 40 ? '#854F0B' : '#A32D2D';
+    $('overall-num').textContent = s.overall;
+    $('overall-num').style.color = col;
+    $('score-verdict').textContent = s.overall < 40
+      ? 'Recruiter ne dekha bhi nahi hoga. Fix karo turant!'
+      : s.overall < 70 ? 'Theek hai, lekin competitive nahi. Improve karo.'
+      : 'Achha hai! Thoda aur polish karte hain.';
+  }
+
+  $('roast-btn').addEventListener('click', async () => {
+    if (!apiKey || !$('profile-input').value.trim()) return;
+    profileText = $('profile-input').value.trim();
+    showErr('');
+    showView('view-roasting');
+    try {
+      const raw = await callGroq(
+        `Tu ek savage LinkedIn roaster hai jo Hinglish mein bolti hai — funny, relatable, aur thodi brutal. Pehle profile ka ek brutal roast karo (5-7 lines, Hinglish mein, emojis allowed). Fir EXACTLY yeh format mein scores likho:\nSCORE_HEADLINE:XX\nSCORE_SUMMARY:XX\nSCORE_SKILLS:XX\nSCORE_OVERALL:XX\n(XX = sirf number 0-100)`,
+        'Yeh LinkedIn profile roast karo:\n\n' + profileText
+      );
+      const lines = raw.split('\n');
+      const roastLines = lines.filter(l => !l.startsWith('SCORE_'));
+      const scoreLines = lines.filter(l => l.startsWith('SCORE_'));
+      const gs = k => { const l = scoreLines.find(x => x.startsWith(k + ':')); return l ? Math.min(100, Math.max(5, parseInt(l.split(':')[1]) || 35)) : 35; };
+      roastText = roastLines.join('\n').trim();
+      scoreData = { headline: gs('SCORE_HEADLINE'), summary: gs('SCORE_SUMMARY'), skills: gs('SCORE_SKILLS'), overall: gs('SCORE_OVERALL') };
+      showView('view-result');
+      $('roast-actions').style.display = 'none';
+      $('score-card').classList.add('hidden');
+      $('fix-btn').classList.add('hidden');
+      $('retry-btn').classList.add('hidden');
+      typeWriter(roastText, $('roast-text'), () => {
+        $('roast-actions').style.display = 'flex';
+        $('score-card').classList.remove('hidden');
+        renderScoreBars(scoreData);
+        $('fix-btn').classList.remove('hidden');
+        $('retry-btn').classList.remove('hidden');
+      });
+    } catch (e) {
+      showErr('Error: ' + e.message + ' — API key check karo aur retry karo.');
+      showView('view-home');
+    }
+  });
+
+  $('copy-roast-btn').addEventListener('click', () => {
+    navigator.clipboard.writeText(roastText);
+    $('copy-roast-btn').textContent = '✅ Copied!';
+    setTimeout(() => { $('copy-roast-btn').textContent = '📋 Copy roast'; }, 2000);
+  });
+
+  function waShare() {
+    const msg = encodeURIComponent('AI ne meri LinkedIn profile roast ki 😭\n\n"' + roastText.slice(0, 180) + '..."\n\nApni profile roast karwao: roastmyprofile.in');
+    window.open('https://wa.me/?text=' + msg, '_blank');
+  }
+  function liShare() {
+    window.open('https://www.linkedin.com/sharing/share-offsite/?url=https://roastmyprofile.in', '_blank');
+  }
+
+  $('share-wa-btn').addEventListener('click', waShare);
+  $('share-li-btn').addEventListener('click', liShare);
+  $('share-wa2-btn').addEventListener('click', waShare);
+  $('share-li2-btn').addEventListener('click', liShare);
+
+  $('fix-btn').addEventListener('click', async () => {
+    showErr('');
+    showView('view-fixing');
+    try {
+      const raw = await callGroq(
+        `Tu ek expert LinkedIn career coach hai jo Indian students ke liye optimize karta hai. Profile ke teen parts improve karo. SIRF yahi format use karo, kuch aur mat likho:\nHEADLINE: [recruiter-ready headline, max 120 chars]\nSUMMARY: [compelling 3-4 line summary, first person, achievements focused]\nSKILLS: [comma separated top 8 relevant skills]`,
+        'Yeh LinkedIn profile improve karo:\n\n' + profileText
+      );
+      const get = k => { const m = raw.match(new RegExp(k + ':\\s*([\\s\\S]*?)(?=\\n[A-Z]+:|$)')); return m ? m[1].trim() : ''; };
+      fixedData = { headline: get('HEADLINE'), summary: get('SUMMARY'), skills: get('SKILLS') };
+      const secs = [
+        { key: 'headline', label: 'New Headline ✍️', color: '#185FA5' },
+        { key: 'summary', label: 'New Summary 📝', color: '#0F6E56' },
+        { key: 'skills', label: 'Top Skills 🛠️', color: '#854F0B' }
+      ];
+      $('fixed-sections-wrap').innerHTML = secs.filter(s => fixedData[s.key]).map(s => `
+        <div class="card" style="margin-bottom:0.875rem;">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
+            <span style="font-size:14px;font-weight:600;color:${s.color};">${s.label}</span>
+            <button class="btn btn-sm" onclick="navigator.clipboard.writeText(this.dataset.t);this.textContent='✅ Copied!';setTimeout(()=>this.textContent='📋 Copy',2000);" data-t="${fixedData[s.key].replace(/"/g, '&quot;')}">📋 Copy</button>
+          </div>
+          <div class="fixed-box">${fixedData[s.key].replace(/\n/g, '<br>')}</div>
+        </div>`).join('');
+      showView('view-fixed');
+    } catch (e) {
+      showErr('Fix error: ' + e.message);
+      showView('view-result');
+    }
+  });
+
+  function restart() {
+    profileText = ''; roastText = ''; fixedData = null; scoreData = null;
+    $('profile-input').value = '';
+    showErr('');
+    updateRoastBtn();
+    showView('view-home');
+  }
+  $('retry-btn').addEventListener('click', restart);
+  $('restart-btn').addEventListener('click', restart);
+})();
+</script>
+</body>
+</html>
